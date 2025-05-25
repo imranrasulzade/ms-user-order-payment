@@ -1,0 +1,5 @@
+rootProject.name = 'ms-api-service'
+
+include 'user-service'
+include 'order-service'
+include 'payment-service'
