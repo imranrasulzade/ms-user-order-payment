@@ -7,7 +7,7 @@ spring:
 
   data:
     redis:
-      host: redis
+      host: localhost
       port: 6379
 
 # Feign timeout-lar
@@ -17,3 +17,6 @@ feign:
       default:
         connectTimeout: 3000
         readTimeout: 3000
+
+jwt:
+  secret: d36f5e8c61a9c64c38682a162e3460873dcf995a183be7f7c206eefce1a9bb98a

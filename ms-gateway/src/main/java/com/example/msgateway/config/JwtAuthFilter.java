@@ -2,6 +2,7 @@ package com.example.msgateway.config;
 
 import com.example.msgateway.client.AuthClient;
 import com.example.msgateway.enums.Role;
+import com.example.msgateway.service.JwtUtil;
 import com.example.msgateway.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,11 +23,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final String SECRET_KEY = "secret_key"; // Əslində config-dən gəlməlidir
+    private final JwtUtil jwtUtil;
     private final UserService userService;
 
     @Override
@@ -43,10 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String token = authHeader.substring(7);
         try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
-                    .parseClaimsJws(token)
-                    .getBody();
+            Claims claims = jwtUtil.parseToken(token);
 
             String userId = claims.getSubject();
             String username = claims.get("username", String.class);
@@ -59,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 username,
                                 null,
-                                List.of(new SimpleGrantedAuthority(role.toString()))
+                                List.of(new SimpleGrantedAuthority(role.name()))
                         );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -72,3 +70,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "secret_key"; // Əslində env-dən oxunmalıdır
+    private final String SECRET = "d36f5e8c61a9c64c38682a162e3460873dcf995a183be7f7c206eefce1a9bb98a"; // Əslində env-dən oxunmalıdır
     private final long EXPIRATION = 86400000; // 1 gün
 
     public String generateToken(AuthUser user) {

@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RedisCacheService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, UserRoleCacheDto> redisTemplate;
 
     private static final String USER_ROLE_PREFIX = "user_role:";
 
