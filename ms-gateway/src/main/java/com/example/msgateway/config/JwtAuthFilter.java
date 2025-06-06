@@ -1,7 +1,8 @@
-package com.example.msauthservice.config;
+package com.example.msgateway.config;
 
-import com.example.msauthservice.enums.Role;
-import com.example.msauthservice.services.AuthService;
+import com.example.msgateway.client.AuthClient;
+import com.example.msgateway.enums.Role;
+import com.example.msgateway.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
@@ -19,15 +20,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final AuthService authService;
     private final String SECRET_KEY = "secret_key"; // Əslində config-dən gəlməlidir
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -53,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                Role role = authService.getRoleForUser(Long.parseLong(userId));
+                Role role = userService.getUserRole(Long.parseLong(userId));
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(

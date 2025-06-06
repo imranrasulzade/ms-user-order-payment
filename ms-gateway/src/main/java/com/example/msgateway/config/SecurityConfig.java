@@ -1,4 +1,4 @@
-package com.example.msauthservice.config;
+package com.example.msgateway.config;//package com.example.msauthservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

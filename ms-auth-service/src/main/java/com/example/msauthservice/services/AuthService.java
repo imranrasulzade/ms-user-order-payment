@@ -1,10 +1,7 @@
 package com.example.msauthservice.services;
 
 import com.example.msauthservice.client.UserServiceClient;
-import com.example.msauthservice.dto.AuthResponse;
-import com.example.msauthservice.dto.LoginRequest;
-import com.example.msauthservice.dto.RegisterRequest;
-import com.example.msauthservice.dto.UserRoleCacheDto;
+import com.example.msauthservice.dto.*;
 import com.example.msauthservice.entities.AuthUser;
 import com.example.msauthservice.enums.AuthStatus;
 import com.example.msauthservice.enums.Role;
@@ -48,9 +45,15 @@ public class AuthService {
         AuthUser user = new AuthUser();
         user.setUsername(request.getUsername());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        // TODO user client ile user post qayidan id set edirem alta
+        UserDto userDto = UserDto.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .status(true)
+                .role(request.getRole())
+                .build();
+        Long userId = userClient.addUser(userDto);
         user.setStatus(AuthStatus.ACTIVE);
-        user.setUserId(1L); // TODO deyish
+        user.setUserId(userId);
 
         AuthUser saved = authUserRepository.save(user);
         Role userRole = getRoleForUser(saved.getUserId());
@@ -59,15 +62,17 @@ public class AuthService {
     }
 
     public Role getRoleForUser(Long userId) {
-        // Əvvəlcə cache-dən yoxla
         return redisCacheService.getUserRole(userId)
                 .map(UserRoleCacheDto::getRole)
                 .orElseGet(() -> {
-                    // Əgər cache-də yoxdursa user-service-ə sorğu at
                     UserRoleCacheDto dto = userClient.getUserRole(userId);
                     redisCacheService.saveUserRole(userId, dto);
                     return dto.getRole();
                 });
+    }
+
+    public void evictRoleFromCache(Long userId) {
+        redisCacheService.evictUserRole(userId);
     }
 
 }

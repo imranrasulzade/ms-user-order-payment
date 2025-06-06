@@ -1,11 +1,10 @@
-package com.example.msauthservice.services;
+package com.example.msgateway.service;
 
-import com.example.msauthservice.dto.UserRoleCacheDto;
+import com.example.msgateway.dto.UserRoleCacheDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.Optional;
 
 @Service
@@ -16,11 +15,6 @@ public class RedisCacheService {
 
     private static final String USER_ROLE_PREFIX = "user_role:";
 
-    public void saveUserRole(Long userId, UserRoleCacheDto dto) {
-        String key = USER_ROLE_PREFIX + userId;
-        redisTemplate.opsForValue().set(key, dto, Duration.ofDays(1)); // 1 gunluk TTL
-    }
-
     public Optional<UserRoleCacheDto> getUserRole(Long userId) {
         String key = USER_ROLE_PREFIX + userId;
         Object cached = redisTemplate.opsForValue().get(key);
@@ -28,11 +22,5 @@ public class RedisCacheService {
             return Optional.of(dto);
         }
         return Optional.empty();
-    }
-
-    // Client ile etdim ama bunu rabbite deyiserem
-    public void evictUserRole(Long userId) {
-        String key = USER_ROLE_PREFIX + userId;
-        redisTemplate.delete(key);
     }
 }
