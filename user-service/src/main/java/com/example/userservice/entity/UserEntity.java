@@ -1,5 +1,6 @@
 package com.example.userservice.entity;
 
+import com.example.userservice.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,4 +15,8 @@ public class UserEntity {
     private String username;
     private String email;
     private Boolean status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role;
 }

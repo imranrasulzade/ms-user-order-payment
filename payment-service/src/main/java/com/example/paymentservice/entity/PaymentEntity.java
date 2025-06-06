@@ -1,5 +1,6 @@
 package com.example.paymentservice.entity;
 
+import com.example.paymentservice.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,4 +18,7 @@ public class PaymentEntity {
     private String currency;
 
     private Long orderId;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 }

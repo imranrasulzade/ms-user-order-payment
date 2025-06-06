@@ -1,5 +1,6 @@
 package com.example.orderservice.entity;
 
+import com.example.orderservice.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,4 +15,6 @@ public class OrderEntity {
     private Integer quantity;
     private Long userId;
     private Long paymentId;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 }

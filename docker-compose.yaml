@@ -1,53 +1,35 @@
 version: '3.9'
 
 services:
-  user-db:
+  postgres-db:
     image: postgres:15
-    container_name: user-db
+    container_name: postgres-db-multiple
     environment:
-      POSTGRES_DB: user_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - ms-network
     volumes:
-      - user-db-data:/var/lib/postgresql/data
+      - pg-data:/var/lib/postgresql/data
+      - ./init-multiple-db:/docker-entrypoint-initdb.d
 
-  order-db:
-    image: postgres:15
-    container_name: order-db
-    environment:
-      POSTGRES_DB: order_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+  redis:
+    image: redis:7
+    container_name: redis
     ports:
-      - "5434:5432"
+      - "6379:6379"
     networks:
       - ms-network
     volumes:
-      - order-db-data:/var/lib/postgresql/data
-
-  payment-db:
-    image: postgres:15
-    container_name: payment-db
-    environment:
-      POSTGRES_DB: payment_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5435:5432"
-    networks:
-      - ms-network
-    volumes:
-      - payment-db-data:/var/lib/postgresql/data
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"] # persistens üçün
 
 networks:
   ms-network:
     driver: bridge
 
 volumes:
-  user-db-data:
-  order-db-data:
-  payment-db-data:
+  pg-data:
+  redis-data:

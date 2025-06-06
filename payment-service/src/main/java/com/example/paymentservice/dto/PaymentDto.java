@@ -1,5 +1,6 @@
 package com.example.paymentservice.dto;
 
+import com.example.paymentservice.enums.PaymentStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -10,5 +11,6 @@ public class PaymentDto {
     private BigDecimal amount;
     private String currency;
     private Long orderId;
+    private PaymentStatus status;
 
 }
