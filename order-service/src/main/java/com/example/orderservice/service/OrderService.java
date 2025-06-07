@@ -69,4 +69,23 @@ public class OrderService {
         log.info("Change order status end by id {}", id);
 
     }
+
+    public Long createBySaga(OrderDto orderDto){
+        log.info("Save createBySaga order start by id {}", orderDto.getId());
+        UserDto user;
+        try {
+            user = userClient.getUserById(orderDto.getUserId());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            user = null;
+        }
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        OrderEntity orderEntity = orderMapper.toEntity(orderDto);
+        orderEntity.setStatus(OrderStatus.CREATED);
+        OrderEntity savedOrder = orderRepository.save(orderEntity);
+        log.info("Save createBySaga order end by id {}", orderDto.getId());
+        return savedOrder.getId();
+    }
 }

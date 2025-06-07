@@ -33,4 +33,26 @@ public class PaymentService {
     }
 
 
+    public Long createBySaga(PaymentDto paymentDto) {
+        try {
+            PaymentEntity paymentEntity = paymentMapper.toEntity(paymentDto);
+            paymentEntity.setStatus(PaymentStatus.CREATED);
+            Thread.sleep(1000);
+            paymentEntity.setStatus(PaymentStatus.SUCCESS);
+            PaymentEntity savedPaymentEntity = paymentRepository.save(paymentEntity);
+            return savedPaymentEntity.getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public void changeStatus(Long id, PaymentStatus status) {
+        PaymentEntity paymentEntity = paymentRepository.findById(id).orElseThrow(() -> new RuntimeException("Payment not found"));
+        paymentEntity.setStatus(status);
+        paymentRepository.save(paymentEntity);
+    }
+
+
 }

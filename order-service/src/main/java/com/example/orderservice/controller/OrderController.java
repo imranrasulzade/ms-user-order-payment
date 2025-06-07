@@ -31,4 +31,9 @@ public class OrderController {
         orderService.changeStatus(id, paymentId, status);
     }
 
+    @PostMapping("/create-by-saga")
+    public Long createBySaga(@RequestBody OrderDto orderDto) {
+        return orderService.createBySaga(orderDto);
+    }
+
 }
