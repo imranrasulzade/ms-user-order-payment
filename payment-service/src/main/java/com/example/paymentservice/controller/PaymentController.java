@@ -28,4 +28,10 @@ public class PaymentController {
     public void changeStatus(@RequestParam Long id, @RequestParam PaymentStatus status) {
         paymentService.changeStatus(id, status);
     }
+
+    @GetMapping("/test-get-for-circuit/{orderId}")
+    public String testGetForCircuit(@PathVariable Long orderId) {
+        return "Payment success by orderId: " + orderId.toString() + "!";
+    }
+
 }
