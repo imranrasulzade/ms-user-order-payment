@@ -10,6 +10,13 @@ spring:
       host: localhost
       port: 6379
 
+  main:
+    web-application-type: reactive
+    cloud:
+      gateway:
+        default-filters:
+          - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
 # Feign timeout-lar
 feign:
   client:

@@ -3,44 +3,47 @@ package com.example.msgateway.config;//package com.example.msauthservice.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtWebFilter jwtWebFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-                .authorizeHttpRequests(auth -> auth
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(exchange -> exchange
 
+//                                .pathMatchers("/**").permitAll()
                         // Public endpoints
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .pathMatchers("/api/auth/login", "/api/auth/register").permitAll()
 
                         // Order endpoints - only USER
-                        .requestMatchers("/orders/**").hasAuthority("USER")
+                        .pathMatchers("/orders/**").hasAuthority("USER")
 
                         // Role change - only ADMIN
-                        .requestMatchers("/users/role/change/**").hasAuthority("ADMIN")
+                        .pathMatchers("/users/role/change/**").hasAuthority("ADMIN")
 
                         // Payments - USER or ADMIN
-                        .requestMatchers("/payments/**").hasAnyAuthority("USER", "ADMIN")
+                        .pathMatchers("/payments/**").hasAnyAuthority("USER", "ADMIN")
 
-                        // Default for user endpoints
-                        .requestMatchers("/users/**").hasAnyAuthority("USER", "ADMIN")
+                        // Default user endpoints
+                        .pathMatchers("/users/**").hasAnyAuthority("USER", "ADMIN")
 
-                        // All others
-                        .anyRequest().authenticated()
+                        // Fallback
+                        .anyExchange().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(jwtWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
-
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

@@ -11,12 +11,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    @Bean
-    public RedisTemplate<String, UserRoleCacheDto> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, UserRoleCacheDto> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        return template;
-    }
+//    @Bean
+//    public RedisTemplate<String, UserRoleCacheDto> redisTemplate(RedisConnectionFactory connectionFactory) {
+//        RedisTemplate<String, UserRoleCacheDto> template = new RedisTemplate<>();
+//        template.setConnectionFactory(connectionFactory);
+//        return template;
+//    }
 
 
 //    @Bean
@@ -27,5 +27,16 @@ public class RedisConfig {
 //        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 //        return template;
 //    }
+
+    @Bean
+    public RedisTemplate<String, UserRoleCacheDto> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, UserRoleCacheDto> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        template.afterPropertiesSet();
+        return template;
+    }
 
 }
